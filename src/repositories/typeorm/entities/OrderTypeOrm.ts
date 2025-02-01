@@ -26,9 +26,6 @@ export class OrderTypeOrm extends BaseEntity implements IOrder {
 	@Column('text', { name: 'deliveryCEP' })
 	deliveryCEP: string;
 
-	@Column('text', { name: 'description' })
-	description: string;
-
 	@Column('numeric', { name: 'quantity' })
 	quantity: number;
 
@@ -38,20 +35,13 @@ export class OrderTypeOrm extends BaseEntity implements IOrder {
 	@Column('timestamp without time zone', { name: 'createdAt' })
 	createdAt: Date;
 
-	@Column('timestamp without time zone', { name: 'updatedAt' })
-	updatedAt?: Date | undefined;
-
-	@Column('timestamp without time zone', { name: 'deletedAt' })
-	deletedAt: Date;
-
 	@ManyToOne(() => ProductTypeOrm, (products) => products.orders)
-	@JoinColumn([{ name: 'productId', referencedColumnName: 'pId' }])
+	@JoinColumn([{ name: 'productPId', referencedColumnName: 'pId' }])
 	product: ProductTypeOrm;
 
-	@Column()
 	productId: string;
 
-	@Column()
+	@Column('integer', { name: 'productPId' })
 	productPId: number;
 
 	init(props: Omit<IOrder, 'id'>) {

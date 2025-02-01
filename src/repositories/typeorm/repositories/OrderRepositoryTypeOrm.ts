@@ -18,10 +18,12 @@ export default class OrderRepositoryTypeOrm implements IOrderRepository {
 					AppDataSource.getRepository(OrderTypeOrm);
 
 				// validating product
-				await AppDataSource.getRepository(ProductTypeOrm).findOneByOrFail({
+				const product = await AppDataSource.getRepository(ProductTypeOrm).findOneByOrFail({
 					id: order.productId,
 					deletedAt: IsNull(),
 				});
+
+				orderTypeOrm.productPId = product.pId;
 
 				// saving order
 				orderRepository.save(orderTypeOrm);
@@ -31,10 +33,12 @@ export default class OrderRepositoryTypeOrm implements IOrderRepository {
 				const queryRunner = tx.core as QueryRunner;
 
 				// validating product
-				await queryRunner.manager.findOneByOrFail(ProductTypeOrm, {
+				const product = await queryRunner.manager.findOneByOrFail(ProductTypeOrm, {
 					id: order.productId,
 					deletedAt: IsNull(),
 				});
+
+				orderTypeOrm.productPId = product.pId;
 
 				queryRunner.manager.save(OrderTypeOrm, orderTypeOrm);
 
@@ -57,19 +61,31 @@ export default class OrderRepositoryTypeOrm implements IOrderRepository {
 			if (!tx) {
 				const orderRepository = AppDataSource.getRepository(OrderTypeOrm);
 
-				const orders: OrderTypeOrm[] = await orderRepository.find({
-					where: {
-						deletedAt: IsNull(),
-					},
-				});
+				const orders: OrderTypeOrm[] = await orderRepository.find({});
+
+				for await (const order of orders) {
+					const productRepository = AppDataSource.getRepository(ProductTypeOrm);
+					const product = await productRepository.findOneOrFail({
+						where: { pId: order.productPId, deletedAt: IsNull() },
+					});
+
+					order.productId = product.id;
+				}
 
 				return orders.map((order: OrderTypeOrm) => order.toModel);
 			} else {
 				const queryRunner = tx.core as QueryRunner;
 
-				const orders: OrderTypeOrm[] = await queryRunner.manager.findBy(OrderTypeOrm, {
-					deletedAt: IsNull(),
-				});
+				const orders: OrderTypeOrm[] = await queryRunner.manager.find(OrderTypeOrm);
+
+				for await (const order of orders) {
+					const productRepository = queryRunner.manager.getRepository(ProductTypeOrm);
+					const product = await productRepository.findOneOrFail({
+						where: { pId: order.productPId, deletedAt: IsNull() },
+					});
+
+					order.productId = product.id;
+				}
 
 				return orders.map((order: OrderTypeOrm) => order.toModel);
 			}

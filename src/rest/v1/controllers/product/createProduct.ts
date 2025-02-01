@@ -8,7 +8,7 @@ import { productCreateSchema, productCreateType } from '../../schemas/product/cr
 
 export const createProduct = (config: Config) => async (c: Context) => {
 	try {
-		const productService = getInjection(ProductService);
+		const productService: ProductService = getInjection(ProductService);
 		const tx: Tx = c.get('tx');
 
 		const body: productCreateType = await productCreateSchema.validate(await c.req.json());

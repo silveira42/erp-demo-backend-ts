@@ -110,10 +110,10 @@ model Orders {
     id          String   @default(uuid())
     customer    String
     deliveryCEP String
-    productId   Int
+    productPId  Int
     quantity    Int
     total       Float
     createdAt   DateTime
 
-    product Products @relation(fields: [productId], references: [pId], name: "productOrders", onDelete: NoAction, onUpdate: NoAction)
+    product Products @relation(fields: [productPId], references: [pId], name: "productOrders", onDelete: NoAction, onUpdate: NoAction)
 }
