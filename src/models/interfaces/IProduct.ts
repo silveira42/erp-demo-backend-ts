@@ -6,6 +6,7 @@ export default interface IProduct extends IBaseInterface {
 	price: number;
 	description: string;
 	thumbnail: string;
+	sku?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 }

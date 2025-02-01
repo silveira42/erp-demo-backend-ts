@@ -91,27 +91,29 @@ model Sessions {
 }
 
 model Products {
-    id          Int      @id @default(autoincrement())
-    uuid        String   @default(uuid())
+    pId         Int       @id @default(autoincrement())
+    id          String    @default(uuid())
     title       String
     price       Float
     description String
     thumbnail   String
+    sku         String?
     createdAt   DateTime
     updatedAt   DateTime
-    deletedAt   DateTime
+    deletedAt   DateTime?
 
     orders Orders[] @relation(name: "productOrders")
 }
 
 model Orders {
-    id          Int      @id @default(autoincrement())
-    uuid        String   @default(uuid())
+    pId         Int      @id @default(autoincrement())
+    id          String   @default(uuid())
     customer    String
     deliveryCEP String
     productId   Int
     quantity    Int
+    total       Float
     createdAt   DateTime
 
-    product Products @relation(fields: [productId], references: [id], name: "productOrders", onDelete: NoAction, onUpdate: NoAction)
+    product Products @relation(fields: [productId], references: [pId], name: "productOrders", onDelete: NoAction, onUpdate: NoAction)
 }

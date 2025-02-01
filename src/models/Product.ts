@@ -7,6 +7,7 @@ export default class Product implements IProduct, IBaseModel {
 	price: number;
 	description: string;
 	thumbnail: string;
+	sku?: string;
 	createdAt?: Date;
 	updatedAt?: Date;
 
@@ -16,6 +17,7 @@ export default class Product implements IProduct, IBaseModel {
 		this.price = props.price;
 		this.description = props.description;
 		this.thumbnail = props.thumbnail;
+		this.sku = props.sku;
 		this.createdAt = props.createdAt;
 		this.updatedAt = props.updatedAt;
 	}
@@ -27,6 +29,7 @@ export default class Product implements IProduct, IBaseModel {
 			price: this.price,
 			description: this.description,
 			thumbnail: this.thumbnail,
+			sku: this.sku,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 		};
@@ -39,6 +42,7 @@ export default class Product implements IProduct, IBaseModel {
 			price: this.price,
 			description: this.description,
 			thumbnail: this.thumbnail,
+			sku: this.sku,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 		};
