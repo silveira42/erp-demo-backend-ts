@@ -1,0 +1,6 @@
+{
+	"ignore": ["**/*.test.ts", "**/*.spec.ts", "node_modules"],
+	"watch": ["/app/src"],
+	"exec": "npx prisma generate && yarn start",
+	"ext": "ts"
+}

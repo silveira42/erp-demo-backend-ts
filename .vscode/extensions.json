@@ -1,0 +1,22 @@
+{
+    "recommendations": [
+			"cardinal90.multi-cursor-case-preserve",
+			"mgmcdermott.vscode-language-babel",
+			"editorconfig.editorconfig",
+			"dbaeumer.vscode-eslint",
+			"tamasfe.even-better-toml",
+			"teledemic.branch-warnings",
+			"mhutchie.git-graph",
+			"github.vscode-pull-request-github",
+			"eamodio.gitlens",
+			"xabikos.javascriptsnippets",
+			"ms-vscode.vscode-typescript-next",
+			"sburg.vscode-javascript-booster",
+			"christian-kohler.npm-intellisense",
+			"christian-kohler.path-intellisense",
+			"esbenp.prettier-vscode",
+			"prisma.prisma",
+			"vitest.explorer",
+			"alexcvzz.vscode-sqlite"
+		]
+}

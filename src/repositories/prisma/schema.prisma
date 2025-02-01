@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+    // binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum CredentialTypes {
+    LOGIN
+    GOOGLE
+}
+
+enum CredentialStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
+enum LoginTypes {
+    EMAIL
+    PHONE
+    USERNAME
+}
+
+enum GenderTypes {
+    NOTDECLARED
+    WOMAN
+    MAN
+    NONBINARY
+}
+
+// user models
+
+model Users {
+    id          String      @id @default(uuid())
+    fullName    String
+    nickName    String
+    fiscalId    String      @unique
+    gender      GenderTypes
+    dateOfBirth DateTime
+    settings    Json
+    createdAt   DateTime
+    updatedAt   DateTime
+    deletedAt   DateTime?
+
+    logins      Logins[]      @relation(name: "userLogins")
+    sessions    Sessions[]    @relation(name: "userSessions")
+    credentials Credentials[] @relation(name: "userCredentials")
+}
+
+model Logins {
+    id        String     @id @default(uuid())
+    userId    String
+    type      LoginTypes
+    key       String     @unique
+    createdAt DateTime
+    deletedAt DateTime?
+
+    user Users @relation(fields: [userId], references: [id], name: "userLogins")
+}
+
+model Credentials {
+    id        String           @id @default(uuid())
+    userId    String
+    type      CredentialTypes
+    value     String
+    status    CredentialStatus @default(ACTIVE)
+    createdAt DateTime
+    deletedAt DateTime?
+
+    user Users @relation(fields: [userId], references: [id], name: "userCredentials")
+
+    @@unique([userId, type])
+}
+
+model Sessions {
+    id          String   @id @default(uuid())
+    userId      String
+    token       String   @unique
+    retrievedAt DateTime
+    expiresAt   DateTime
+    isActive    Boolean
+
+    user Users @relation(fields: [userId], references: [id], name: "userSessions", onDelete: NoAction, onUpdate: NoAction)
+}
+
+model Products {
+    id          Int      @id @default(autoincrement())
+    uuid        String   @default(uuid())
+    title       String
+    price       Float
+    description String
+    thumbnail   String
+    createdAt   DateTime
+    updatedAt   DateTime
+    deletedAt   DateTime
+
+    orders Orders[] @relation(name: "productOrders")
+}
+
+model Orders {
+    id          Int      @id @default(autoincrement())
+    uuid        String   @default(uuid())
+    customer    String
+    deliveryCEP String
+    productId   Int
+    quantity    Int
+    createdAt   DateTime
+
+    product Products @relation(fields: [productId], references: [id], name: "productOrders", onDelete: NoAction, onUpdate: NoAction)
+}
