@@ -50,6 +50,15 @@ export class ProductTypeOrm extends BaseEntity implements IProduct {
 		this.updatedAt = new Date();
 	}
 
+	update(props: Partial<IProduct>) {
+		this.title = props.title || this.title;
+		this.price = props.price || this.price;
+		this.description = props.description || this.description;
+		this.thumbnail = props.thumbnail || this.thumbnail;
+		this.sku = props.sku || this.sku;
+		this.updatedAt = new Date();
+	}
+
 	public get toModel(): Product {
 		return new Product(this);
 	}

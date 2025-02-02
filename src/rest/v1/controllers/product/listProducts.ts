@@ -9,7 +9,9 @@ export const listProducts = (config: Config) => async (c: Context) => {
 		const productService: ProductService = getInjection(ProductService);
 		const tx: Tx = c.get('tx');
 
-		const products = await productService.list(tx);
+		const { limit, skip } = c.req.query();
+
+		const products = await productService.list(parseInt(limit), parseInt(skip), tx);
 		return c.json(
 			products.map((product) => product.toApi),
 			200

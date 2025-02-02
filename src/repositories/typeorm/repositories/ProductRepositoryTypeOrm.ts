@@ -32,7 +32,7 @@ export default class ProductRepositoryTypeOrm implements IProductRepository {
 		}
 	}
 
-	async list(tx?: Tx): Promise<Product[]> {
+	async list(limit: number, skip: number, tx?: Tx): Promise<Product[]> {
 		if (!tx) {
 			const productRepository = AppDataSource.getRepository(ProductTypeOrm);
 
@@ -40,14 +40,20 @@ export default class ProductRepositoryTypeOrm implements IProductRepository {
 				where: {
 					deletedAt: IsNull(),
 				},
+				take: limit,
+				skip: skip,
 			});
 
 			return product.map((product: ProductTypeOrm) => product.toModel);
 		} else {
 			const queryRunner = tx.core as QueryRunner;
 
-			const product: ProductTypeOrm[] = await queryRunner.manager.findBy(ProductTypeOrm, {
-				deletedAt: IsNull(),
+			const product: ProductTypeOrm[] = await queryRunner.manager.find(ProductTypeOrm, {
+				where: {
+					deletedAt: IsNull(),
+				},
+				take: limit,
+				skip: skip,
 			});
 
 			return product.map((product: ProductTypeOrm) => product.toModel);
@@ -62,15 +68,84 @@ export default class ProductRepositoryTypeOrm implements IProductRepository {
 		throw new Error('Method not implemented.');
 	}
 
-	update(id: string, product: Partial<IProduct>, tx?: Tx): Promise<Product> {
-		throw new Error('Method not implemented.');
+	async update(id: string, product: Partial<IProduct>, tx?: Tx): Promise<Product> {
+		try {
+			if (!tx) {
+				const productRepository: Repository<ProductTypeOrm> =
+					AppDataSource.getRepository(ProductTypeOrm);
+
+				const productToUpdate = await productRepository.findOneByOrFail({
+					id: id,
+				});
+
+				productToUpdate.update(product);
+
+				await productRepository.save(productToUpdate);
+
+				return productToUpdate.toModel;
+			} else {
+				const queryRunner = tx.core as QueryRunner;
+
+				const productToUpdate = await queryRunner.manager.findOneByOrFail(ProductTypeOrm, {
+					id: id,
+				});
+
+				productToUpdate.update(product);
+
+				await queryRunner.manager.save(productToUpdate);
+
+				return productToUpdate.toModel;
+			}
+		} catch (error: unknown) {
+			if (
+				(error as Error).message.includes(
+					'Could not find any entity of type "ProductTypeOrm" matching:'
+				)
+			) {
+				throw new Error(`Product with id "${id}" not found`);
+			}
+			throw error;
+		}
 	}
 
 	getByInternalId(internalId: number, tx?: Tx): Promise<Product> {
 		throw new Error('Method not implemented.');
 	}
 
-	delete(id: string, tx?: Tx): Promise<void> {
-		throw new Error('Method not implemented.');
+	async delete(id: string, tx?: Tx): Promise<void> {
+		try {
+			if (!tx) {
+				const productRepository: Repository<ProductTypeOrm> =
+					AppDataSource.getRepository(ProductTypeOrm);
+
+				const product = await productRepository.findOneByOrFail({ id });
+
+				product.deletedAt = new Date();
+
+				await productRepository.save(product);
+			} else {
+				const queryRunner = tx.core as QueryRunner;
+
+				const product: ProductTypeOrm = await queryRunner.manager.findOneByOrFail(
+					ProductTypeOrm,
+					{
+						id,
+					}
+				);
+
+				product.deletedAt = new Date();
+
+				await queryRunner.manager.save(product);
+			}
+		} catch (error: unknown) {
+			if (
+				(error as Error).message.includes(
+					'Could not find any entity of type "ProductTypeOrm" matching:'
+				)
+			) {
+				throw new Error(`Product with id "${id}" not found`);
+			}
+			throw error;
+		}
 	}
 }

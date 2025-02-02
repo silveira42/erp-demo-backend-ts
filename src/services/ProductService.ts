@@ -4,6 +4,7 @@ import { GetInjection } from '../utils/getInjection';
 import IProductRepository from '../repositories/interfaces/IProductRepository';
 import Tx from '../models/interfaces/Tx';
 import { productCreateType } from '../rest/v1/schemas/product/create';
+import { productUpdateType } from '../rest/v1/schemas/product/update';
 
 export default class ProductService {
 	@GetInjection('ProductRepository')
@@ -21,7 +22,20 @@ export default class ProductService {
 		return await this.productRepository.create(productProps, tx);
 	}
 
-	public async list(tx?: Tx): Promise<Product[]> {
-		return await this.productRepository.list(tx);
+	public async update(
+		userId: string,
+		id: string,
+		product: productUpdateType,
+		tx?: Tx
+	): Promise<Product> {
+		return await this.productRepository.update(id, product, tx);
+	}
+
+	async delete(userId: string, productId: string, tx?: Tx): Promise<void> {
+		return await this.productRepository.delete(productId, tx);
+	}
+
+	public async list(limit?: number, skip?: number, tx?: Tx): Promise<Product[]> {
+		return await this.productRepository.list(limit || 20, skip || 0, tx);
 	}
 }
