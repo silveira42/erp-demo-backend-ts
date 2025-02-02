@@ -15,7 +15,7 @@ export const createProduct = (config: Config) => async (c: Context) => {
 
 		const createdProduct: Product = await productService.create(c.get('userId'), body, tx);
 
-		return c.json(createdProduct.toApi, 200);
+		return c.json(createdProduct.toApi, 201);
 	} catch (error) {
 		return c.json({ error: (error as Error).message }, 500);
 	}

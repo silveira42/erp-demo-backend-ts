@@ -7,16 +7,25 @@ import { StatusCode } from 'hono/utils/http-status';
 export const validateToken = (config: Config) => async (c: Context, next: any) => {
 	try {
 		const token = c.req.header('Access-Token');
+		const apiToken = c.req.header('Api-Token');
 
 		const sessionService = getInjection(SessionService);
 
-		if (!token) {
-			return c.json({ error: 'Access-Token header is mandatory.' }, 401);
+		if (!token && !apiToken) {
+			return c.json({ error: 'Access-Token or Api-Token header is mandatory.' }, 401);
 		}
 
-		const activeSession = await sessionService.getByToken(token);
+		if (token) {
+			// if default token
+			const activeSession = await sessionService.getByToken(token);
 
-		c.set('userId', activeSession.userId);
+			c.set('userId', activeSession.userId);
+		} else {
+			// if api token
+			if (apiToken !== config.apiToken) {
+				return c.json({ error: 'Invalid API Token.' }, 401);
+			}
+		}
 
 		await next();
 	} catch (error) {
