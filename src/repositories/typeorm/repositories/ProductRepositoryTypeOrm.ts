@@ -42,6 +42,9 @@ export default class ProductRepositoryTypeOrm implements IProductRepository {
 				},
 				take: limit,
 				skip: skip,
+				order: {
+					updatedAt: 'DESC',
+				},
 			});
 
 			return product.map((product: ProductTypeOrm) => product.toModel);
@@ -54,6 +57,9 @@ export default class ProductRepositoryTypeOrm implements IProductRepository {
 				},
 				take: limit,
 				skip: skip,
+				order: {
+					updatedAt: 'DESC',
+				},
 			});
 
 			return product.map((product: ProductTypeOrm) => product.toModel);

@@ -6,7 +6,7 @@ const AppDataSource = new DataSource({
 	host: '192.168.15.189',
 	port: 3055,
 	username: 'postgres',
-	password: 'examplepassword',
+	password: 'hi3t443g',
 	database: '',
 	synchronize: false,
 	entities: [__dirname + '/entities/*.ts'],

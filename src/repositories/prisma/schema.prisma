@@ -117,3 +117,11 @@ model Orders {
 
     product Products @relation(fields: [productPId], references: [pId], name: "productOrders", onDelete: NoAction, onUpdate: NoAction)
 }
+
+model Customers {
+    pId         Int      @id @default(autoincrement())
+    id          String   @default(uuid())
+    name        String
+    deliveryCEP String
+    createdAt   DateTime
+}

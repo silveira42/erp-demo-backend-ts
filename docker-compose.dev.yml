@@ -16,7 +16,7 @@ services:
         image: postgres:16
         environment:
             POSTGRES_USER: postgres
-            POSTGRES_PASSWORD: examplepassword
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
         volumes:
             - pgdata:/var/lib/postgresql/data
         ports:

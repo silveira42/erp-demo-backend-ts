@@ -66,7 +66,7 @@ export default class OrderRepositoryTypeOrm implements IOrderRepository {
 				for await (const order of orders) {
 					const productRepository = AppDataSource.getRepository(ProductTypeOrm);
 					const product = await productRepository.findOneOrFail({
-						where: { pId: order.productPId, deletedAt: IsNull() },
+						where: { pId: order.productPId },
 					});
 
 					order.productId = product.id;
@@ -81,7 +81,7 @@ export default class OrderRepositoryTypeOrm implements IOrderRepository {
 				for await (const order of orders) {
 					const productRepository = queryRunner.manager.getRepository(ProductTypeOrm);
 					const product = await productRepository.findOneOrFail({
-						where: { pId: order.productPId, deletedAt: IsNull() },
+						where: { pId: order.productPId },
 					});
 
 					order.productId = product.id;
